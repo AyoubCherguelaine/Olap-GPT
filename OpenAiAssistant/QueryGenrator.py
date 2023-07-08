@@ -13,7 +13,7 @@ import openai
 import tiktoken
 import json
 
-import config
+from . import config
 
 # OpenAI API key
 openai.api_key = config.key
@@ -69,4 +69,69 @@ class OpenAIAssistant:
 
         return response
 
+    @classmethod
+    def longChat(system_message,user_message,old_messages:list):
+        pass
 
+
+class DBAnalyzer:
+
+    @staticmethod
+    def __convert_response(response):
+        pass
+    
+    @staticmethod
+    def AnalyseTables(db_Respresentation:list):
+        System_message ="""From this DB Tables representation 
+Describe table by table ignoring columns
+Response like : {'describe':[{'table1':"description"},{'table1':"description"},...]}
+"""
+        str_representation = "\n\n".join(db_Respresentation)
+
+        user_message = f"""Describe table by table ignoring columns:
+        ({str_representation})"""
+
+        print(user_message)
+        system_token = set_number_of_token(System_message)
+        user_token = set_number_of_token(user_message)
+        max_input_token  = system_token + user_token
+        print(max_input_token)
+
+        # send request to open ai api 
+
+    @staticmethod
+    def defineCubes(db_Respresentation,structure_response):
+        str_representation = "\n\n".join(db_Respresentation)
+      
+        Old_user_message = """From this DB Tables representation 
+Describe table by table ignoring columns
+Response like : {'describe':[{'table1':'description'},{'table1':'description'},...]} :
+"""
+        Old_user_message += f"({str_representation})"
+        system_message = """Process the table and Extract some OLAP Cubes for analyse
+        """
+
+        user_message ="""From the DB Tables representation and Table Describtion
+Propose all OLAP Cubes can get from this 
+respect this forma : {'cubes':[{'cube1':'describe'},{'cube2':'describe'}....]}
+"""     
+        print(user_message)
+        
+        Old_user_message_token = set_number_of_token(Old_user_message)
+        Old_response = set_number_of_token(structure_response)
+        system_token = set_number_of_token(System_message)
+        user_token = set_number_of_token(user_message)
+        print(system_token,user_token,Old_user_message_token,Old_response)
+
+
+        # senf request to open ai api
+
+class CubeAnalyser:
+
+    def __init__(self):
+        pass
+
+
+    @staticmethod
+    def process_query(describe ,query):
+        pass

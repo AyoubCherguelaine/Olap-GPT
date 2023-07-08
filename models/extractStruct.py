@@ -43,13 +43,14 @@ class DatabaseRepresentation:
 
     def generate_db_representation(self):
         tables = self.get_table_names()
-
+        db_representation = [] 
         for table in tables:
             table_name = table[0]
             columns = self.get_column_names(table_name)
             foreign_key_columns = self.get_foreign_key_columns(table_name)
             table_representation = self.build_table_representation(table_name, columns, foreign_key_columns)
-            self.db_representation.append(table_representation)
+            db_representation.append(table_representation)
+        self.db_representation = db_representation.copy()
 
     def print_db_representation(self):
         for table_representation in self.db_representation:
@@ -69,4 +70,4 @@ def test():
     db.close_connection()
 
 
-# test()
+test()
