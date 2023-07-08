@@ -13,9 +13,10 @@ import openai
 import tiktoken
 import json
 
+import config
+
 # OpenAI API key
-key = "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"
-openai.api_key = key
+openai.api_key = config.key
 
 def set_number_of_token(content):
     """
