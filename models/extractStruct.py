@@ -60,6 +60,7 @@ class DatabaseRepresentation:
         self.cursor.close()
         self.conn.close()
 
+
 def test():
     # Usage example:
     db = DatabaseRepresentation('northwind.db')
@@ -68,4 +69,4 @@ def test():
     db.close_connection()
 
 
-#test()
+# test()
