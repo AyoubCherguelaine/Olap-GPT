@@ -126,6 +126,10 @@ respect this forma : {'cubes':[{'cube1':'describe'},{'cube2':'describe'}....]}
 
         # senf request to open ai api
 
+    @staticmethod
+    def define_cube_query(describe:str):
+        pass
+    
 class CubeAnalyser:
 
     def __init__(self):

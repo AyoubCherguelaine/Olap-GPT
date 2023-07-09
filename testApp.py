@@ -11,4 +11,6 @@ def main():
 
     DBAnalyzer.AnalyseTables(dbr.db_representation)
 
+    
+
 main()
