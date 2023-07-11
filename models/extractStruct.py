@@ -70,4 +70,4 @@ def test():
     db.close_connection()
 
 
-test()
+# test()

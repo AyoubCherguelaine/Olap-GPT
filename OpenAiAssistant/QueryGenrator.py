@@ -13,6 +13,8 @@ import openai
 import tiktoken
 import json
 
+import pandas as pd
+
 from . import config
 
 # OpenAI API key
@@ -30,6 +32,38 @@ def set_number_of_token(content):
     """
     encoding = tiktoken.get_encoding("cl100k_base")
     return len(encoding.encode(content))
+
+class chat:
+    
+    def __init__(self):
+        dic= {"role":[],"message":[]}
+        self.message = pd.DataFrame(dic)
+    
+    def append(self, role, message):
+        new_row = {"role": role, "message": message}
+        self.messages = self.messages.append(new_row, ignore_index=True)
+
+    def convert_to_messages(df):
+        messages = []
+        for _, row in df.iterrows():
+            message = {
+                "role": row["role"],
+                "content": row["message"]
+            }
+            messages.append(message)
+        return messages
+
+    def token_number(self):
+        num_token = 0
+        for _, row in df.iterrows():
+            
+            num_token += set_number_of_token(row["message"])
+        return num_token  
+
+    def delete_FI(self):
+        if len(self.messages) > 0:
+            self.messages = self.messages.iloc[1:]
+        
 
 class OpenAIAssistant:
     """
@@ -70,8 +104,8 @@ class OpenAIAssistant:
         return response
 
     @classmethod
-    def longChat(system_message,user_message,old_messages:list):
-        pass
+    def longChat(user_message,chat_obj):
+        
 
 
 class DBAnalyzer:
@@ -83,13 +117,13 @@ class DBAnalyzer:
     @staticmethod
     def AnalyseTables(db_Respresentation:list):
         System_message ="""From this DB Tables representation 
-Describe table by table ignoring columns
+Describtion or Explaine for each table
 Response like : {'describe':[{'table1':"description"},{'table1':"description"},...]}
 """
         str_representation = "\n\n".join(db_Respresentation)
-
-        user_message = f"""Describe table by table ignoring columns:
-        ({str_representation})"""
+        str_representation = '"'+str_representation+'"'
+        user_message = f"""Describtion or Explaine for each table:
+{str_representation}"""
 
         print(user_message)
         system_token = set_number_of_token(System_message)
@@ -99,6 +133,8 @@ Response like : {'describe':[{'table1':"description"},{'table1':"description"},.
 
         # send request to open ai api 
 
+        return OpenAIAssistant.chat_response(System_message,user_message)
+
     @staticmethod
     def defineCubes(db_Respresentation,structure_response):
         str_representation = "\n\n".join(db_Respresentation)
@@ -107,7 +143,7 @@ Response like : {'describe':[{'table1':"description"},{'table1':"description"},.
 Describe table by table ignoring columns
 Response like : {'describe':[{'table1':'description'},{'table1':'description'},...]} :
 """
-        Old_user_message += f"({str_representation})"
+        Old_user_message += f'"{str_representation})"'
         system_message = """Process the table and Extract some OLAP Cubes for analyse
         """
 
@@ -119,9 +155,11 @@ respect this forma : {'cubes':[{'cube1':'describe'},{'cube2':'describe'}....]}
         
         Old_user_message_token = set_number_of_token(Old_user_message)
         Old_response = set_number_of_token(structure_response)
-        system_token = set_number_of_token(System_message)
+        system_token = set_number_of_token(system_message)
         user_token = set_number_of_token(user_message)
         print(system_token,user_token,Old_user_message_token,Old_response)
+        max_input_token  = system_token + user_token + Old_response +Old_user_message_token
+        print(max_input_token)
 
 
         # senf request to open ai api
