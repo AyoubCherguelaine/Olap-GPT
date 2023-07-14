@@ -18,7 +18,7 @@ import pandas as pd
 from . import config
 
 # OpenAI API key
-openai.api_key = config.key
+openai.api_key = config.key2
 
 def set_number_of_token(content):
     """
@@ -33,19 +33,25 @@ def set_number_of_token(content):
     encoding = tiktoken.get_encoding("cl100k_base")
     return len(encoding.encode(content))
 
-class chat:
+class LlmChat:
     
     def __init__(self):
         dic= {"role":[],"message":[]}
-        self.message = pd.DataFrame(dic)
-    
+        self.messages = pd.DataFrame(dic)
+        self.token_number = 0
+
     def append(self, role, message):
         new_row = {"role": role, "message": message}
+        
         self.messages = self.messages.append(new_row, ignore_index=True)
 
-    def convert_to_messages(df):
+        self.token_number += set_number_of_token(message)
+
+
+    def convert_to_messages(self):
         messages = []
-        for _, row in df.iterrows():
+        
+        for _, row in self.messages.iterrows():
             message = {
                 "role": row["role"],
                 "content": row["message"]
@@ -54,15 +60,15 @@ class chat:
         return messages
 
     def token_number(self):
-        num_token = 0
-        for _, row in df.iterrows():
-            
-            num_token += set_number_of_token(row["message"])
-        return num_token  
+        return self.token_number
 
     def delete_FI(self):
         if len(self.messages) > 0:
+            message = self.messages["message"].iloc[0]
             self.messages = self.messages.iloc[1:]
+
+            self.token_number -= set_number_of_token(message)
+
         
 
 class OpenAIAssistant:
@@ -75,8 +81,8 @@ class OpenAIAssistant:
     - api_key (str): The OpenAI API key.
     """
 
-    @classmethod
-    def chat_response(cls, system_message, user_message):
+    @staticmethod
+    def GPT4K_chat( messages):
         """
         Generates a chat-based response using the OpenAI GPT-3 model.
 
@@ -87,10 +93,36 @@ class OpenAIAssistant:
         Returns:
         - dict: The response from the GPT-3 model.
         """
-        messages = [
-            {"role": "system", "content": system_message},
-            {"role": "user", "content": user_message}
-        ]
+        messages =messages 
+        model_name = "gpt-3.5-turbo"
+
+        
+
+        response = openai.ChatCompletion.create(
+                                                model=model_name,
+                                                messages=messages,
+                                                temperature=0,
+                                                max_tokens=2048,
+                                                top_p=1,
+                                                frequency_penalty=0,
+                                                presence_penalty=0
+                                                )
+
+        return response
+
+    @staticmethod
+    def GPT16K_chat( messages):
+        """
+        Generates a chat-based response using the OpenAI GPT-3 model.
+
+        Parameters:
+        - system_message (str): The system message.
+        - user_message (str): The user message.
+
+        Returns:
+        - dict: The response from the GPT-3 model.
+        """
+        messages =messages 
         model_name = "gpt-3.5-turbo-16k-0613"
 
         
@@ -98,13 +130,35 @@ class OpenAIAssistant:
         response = openai.ChatCompletion.create(
                                                 model=model_name,
                                                 messages=messages,
-                                                temperature=0
+                                                temperature=0,
+                                                max_tokens=8192,
+                                                top_p=1,
+                                                frequency_penalty=0,
+                                                presence_penalty=0
                                                 )
 
         return response
 
-    @classmethod
-    def longChat(user_message,chat_obj):
+    @staticmethod
+    def longChat(chat_obj:LlmChat):
+        messages = chat_obj.convert_to_messages()
+        
+        
+        model_name = "gpt-3.5-turbo-16k"
+        
+        
+
+        response = openai.ChatCompletion.create(
+                                                model=model_name,
+                                                messages=messages,
+                                                temperature=0,
+                                                max_tokens=8192,
+                                                top_p=1,
+                                                frequency_penalty=0,
+                                                presence_penalty=0
+                                                )
+
+        return response
         
 
 
@@ -133,7 +187,12 @@ Response like : {'describe':[{'table1':"description"},{'table1':"description"},.
 
         # send request to open ai api 
 
-        return OpenAIAssistant.chat_response(System_message,user_message)
+        new_chat = LlmChat()
+        new_chat.append('system',System_message)
+        new_chat.append('user',user_message)
+
+        # return OpenAIAssistant.chat_response(System_message,user_message)
+        return OpenAIAssistant.longChat(new_chat)
 
     @staticmethod
     def defineCubes(db_Respresentation,structure_response):
@@ -161,7 +220,12 @@ respect this forma : {'cubes':[{'cube1':'describe'},{'cube2':'describe'}....]}
         max_input_token  = system_token + user_token + Old_response +Old_user_message_token
         print(max_input_token)
 
-
+        new_chat = LlmChat()
+        new_chat.append('user',Old_user_message)
+        new_chat.append('assistant',structure_response)
+        new_chat.append('system',System_message)
+        new_chat.append('user',user_message)
+        print(new_chat.convert_to_messages())
         # senf request to open ai api
 
     @staticmethod
