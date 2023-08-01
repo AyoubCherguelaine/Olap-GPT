@@ -1,0 +1,154 @@
+The following text represents a Database, including Tables, Columns, and their relations such as "Primary Keys" and "Foreign Keys." 
+    Please provide a textual representation for each table: 
+    Database Schema Information:
+
+Table: 'Categories'
+        Column: CategoryID, Type: INTEGER
+        Column: CategoryName, Type: TEXT
+        Column: Description, Type: TEXT
+        Column: Picture, Type: BLOB
+        Primary Key(s): CategoryID
+
+Table: 'sqlite_sequence'
+        Column: name, Type: 
+        Column: seq, Type: 
+
+Table: 'CustomerCustomerDemo'
+        Column: CustomerID, Type: TEXT
+        Column: CustomerTypeID, Type: TEXT
+        Primary Key(s): CustomerID
+        Foreign Keys:
+                From: 'CustomerCustomerDemo'.CustomerTypeID -> To: CustomerDemographics.CustomerTypeID
+                From: 'CustomerCustomerDemo'.CustomerID -> To: Customers.CustomerID
+
+Table: 'CustomerDemographics'
+        Column: CustomerTypeID, Type: TEXT
+        Column: CustomerDesc, Type: TEXT
+        Primary Key(s): CustomerTypeID
+
+Table: 'Customers'
+        Column: CustomerID, Type: TEXT
+        Column: CompanyName, Type: TEXT
+        Column: ContactName, Type: TEXT
+        Column: ContactTitle, Type: TEXT
+        Column: Address, Type: TEXT
+        Column: City, Type: TEXT
+        Column: Region, Type: TEXT
+        Column: PostalCode, Type: TEXT
+        Column: Country, Type: TEXT
+        Column: Phone, Type: TEXT
+        Column: Fax, Type: TEXT
+        Primary Key(s): CustomerID
+
+Table: 'Employees'
+        Column: EmployeeID, Type: INTEGER
+        Column: LastName, Type: TEXT
+        Column: FirstName, Type: TEXT
+        Column: Title, Type: TEXT
+        Column: TitleOfCourtesy, Type: TEXT
+        Column: BirthDate, Type: DATE
+        Column: HireDate, Type: DATE
+        Column: Address, Type: TEXT
+        Column: City, Type: TEXT
+        Column: Region, Type: TEXT
+        Column: PostalCode, Type: TEXT
+        Column: Country, Type: TEXT
+        Column: HomePhone, Type: TEXT
+        Column: Extension, Type: TEXT
+        Column: Photo, Type: BLOB
+        Column: Notes, Type: TEXT
+        Column: ReportsTo, Type: INTEGER
+        Column: PhotoPath, Type: TEXT
+        Primary Key(s): EmployeeID
+        Foreign Keys:
+                From: 'Employees'.ReportsTo -> To: Employees.EmployeeID
+
+Table: 'EmployeeTerritories'
+        Column: EmployeeID, Type: INTEGER
+        Column: TerritoryID, Type: TEXT
+        Primary Key(s): EmployeeID
+        Foreign Keys:
+                From: 'EmployeeTerritories'.TerritoryID -> To: Territories.TerritoryID
+                From: 'EmployeeTerritories'.EmployeeID -> To: Employees.EmployeeID
+
+Table: 'Order Details'
+        Column: OrderID, Type: INTEGER
+        Column: ProductID, Type: INTEGER
+        Column: UnitPrice, Type: NUMERIC
+        Column: Quantity, Type: INTEGER
+        Column: Discount, Type: REAL
+        Primary Key(s): OrderID
+        Foreign Keys:
+                From: 'Order Details'.ProductID -> To: Products.ProductID
+                From: 'Order Details'.OrderID -> To: Orders.OrderID
+
+Table: 'Orders'
+        Column: OrderID, Type: INTEGER
+        Column: CustomerID, Type: TEXT
+        Column: EmployeeID, Type: INTEGER
+        Column: OrderDate, Type: DATETIME
+        Column: RequiredDate, Type: DATETIME
+        Column: ShippedDate, Type: DATETIME
+        Column: ShipVia, Type: INTEGER
+        Column: Freight, Type: NUMERIC
+        Column: ShipName, Type: TEXT
+        Column: ShipAddress, Type: TEXT
+        Column: ShipCity, Type: TEXT
+        Column: ShipRegion, Type: TEXT
+        Column: ShipPostalCode, Type: TEXT
+        Column: ShipCountry, Type: TEXT
+        Primary Key(s): OrderID
+        Foreign Keys:
+                From: 'Orders'.ShipVia -> To: Shippers.ShipperID
+                From: 'Orders'.CustomerID -> To: Customers.CustomerID
+                From: 'Orders'.EmployeeID -> To: Employees.EmployeeID
+
+Table: 'Products'
+        Column: ProductID, Type: INTEGER
+        Column: ProductName, Type: TEXT
+        Column: SupplierID, Type: INTEGER
+        Column: CategoryID, Type: INTEGER
+        Column: QuantityPerUnit, Type: TEXT
+        Column: UnitPrice, Type: NUMERIC
+        Column: UnitsInStock, Type: INTEGER
+        Column: UnitsOnOrder, Type: INTEGER
+        Column: ReorderLevel, Type: INTEGER
+        Column: Discontinued, Type: TEXT
+        Primary Key(s): ProductID
+        Foreign Keys:
+                From: 'Products'.SupplierID -> To: Suppliers.SupplierID
+                From: 'Products'.CategoryID -> To: Categories.CategoryID
+
+Table: 'Regions'
+        Column: RegionID, Type: INTEGER
+        Column: RegionDescription, Type: TEXT
+        Primary Key(s): RegionID
+
+Table: 'Shippers'
+        Column: ShipperID, Type: INTEGER
+        Column: CompanyName, Type: TEXT
+        Column: Phone, Type: TEXT
+        Primary Key(s): ShipperID
+
+Table: 'Suppliers'
+        Column: SupplierID, Type: INTEGER
+        Column: CompanyName, Type: TEXT
+        Column: ContactName, Type: TEXT
+        Column: ContactTitle, Type: TEXT
+        Column: Address, Type: TEXT
+        Column: City, Type: TEXT
+        Column: Region, Type: TEXT
+        Column: PostalCode, Type: TEXT
+        Column: Country, Type: TEXT
+        Column: Phone, Type: TEXT
+        Column: Fax, Type: TEXT
+        Column: HomePage, Type: TEXT
+        Primary Key(s): SupplierID
+
+Table: 'Territories'
+        Column: TerritoryID, Type: TEXT
+        Column: TerritoryDescription, Type: TEXT
+        Column: RegionID, Type: INTEGER
+        Primary Key(s): TerritoryID
+        Foreign Keys:
+                From: 'Territories'.RegionID -> To: Regions.RegionID

@@ -2,3 +2,4 @@
 /OpenAiAssistant/config.py
 /test
 ./testApp.py
+.env
